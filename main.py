@@ -43,11 +43,22 @@ def get_words():
 def get_random_color():
   return "#%06x" % random.randint(0, 0xFFFFFF)
 
+def get_constellation():
+  url = "http://api.tianapi.com/star/index?key=fb63956d84e2b83cee947f14359d1c3f&astro=taurus" 
+  res = requests.get(url).json()
+  constellation=res['newslist'][8]
+  return constellation['type'],constellation['content']
+
 
 client = WeChatClient(app_id, app_secret)
 
 wm = WeChatMessage(client)
 wea, temperature = get_weather()
-data = {"weather":{"value":wea},"temperature":{"value":temperature},"love_days":{"value":get_count()},"birthday_left":{"value":get_birthday()},"words":{"value":get_words(), "color":get_random_color()}}
+tyoo,constell=get_constellation()
+data = {"weather":{"value":wea},"temperature":{"value":temperature},\
+        "love_days":{"value":get_count()},"birthday_left":{"value":get_birthday()},\
+        "words":{"value":get_words(), "color":get_random_color()},\
+        "constellation":{"value":constell,"color":get_random_color()},\
+        "constellation_test":{"value":tyoo}}
 res = wm.send_template(user_id, template_id, data)
 print(res)
